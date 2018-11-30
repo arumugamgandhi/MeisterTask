@@ -8,7 +8,9 @@ This extension will make you up to date with your Meistertask account. It consis
 4. To create & complete a project in meistertask from cliq.
 
 Built-in functions : 
+
 View: To view the tasks in a particular project.
+
 Complete: To finish the task right from cliq.
 
 Installation URL : https://cliq.zoho.com/installapp.do?id=1799
