@@ -1,0 +1,23 @@
+
+message = list();
+if(arguments == "")
+{
+	message = {"text":"Please pass the project title as argument.","bot":{"name":"MeisterTask","image":"https://cdn3.meistertask.com/assets/meisterlabs/products/meistertask/icon-opaque-44fe97656b56e1aa619d76277983e17d980a15dfa680b790581d3bb11a03e6ef.png"},"card":{"theme":"modern-inline"}};
+	return message;
+}
+else
+{
+	params = Map();
+	params.put("name",arguments);
+	response = invokeurl
+	[
+		url :"https://www.meistertask.com/api/projects"
+		type :POST
+		parameters:params
+		connection:"meistertask"
+	];
+	info response;
+	message = {"bot":{"name":"MeisterTask","image":"https://cdn3.meistertask.com/assets/meisterlabs/products/meistertask/icon-opaque-44fe97656b56e1aa619d76277983e17d980a15dfa680b790581d3bb11a03e6ef.png"},"card":{"theme":"modern-inline"},"text":"New project created\nProject Title : " + arguments};
+	zoho.cliq.postToChannel("meistertasknotifier",message);
+}
+return message;

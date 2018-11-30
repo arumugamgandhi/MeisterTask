@@ -1,0 +1,70 @@
+
+message = list();
+rows = list();
+response = invokeurl
+[
+	url :"https://www.meistertask.com/api/tasks"
+	type :GET
+	connection:"meistertask"
+];
+details = "";
+count = 1;
+for each  item in response
+{
+	if(count > 10)
+	{
+		break;
+	}
+	status = item.get("status");
+	if(status != 1)
+	{
+		continue;
+	}
+	taskDetails = item.get("name");
+	assignedTo = item.get("assigned_to_id");
+	//info assignedTo;
+	dueDate = item.get("due");
+	description = item.get("notes");
+	details = details + "Task Name : " + taskDetails + "\nAssigned To : " + assignedTo + "\nDue Date : " + dueDate + "\n";
+	if(assignedTo == null)
+	{
+		name = "not assigned";
+	}
+	else
+	{
+		persons = invokeurl
+		[
+			url :"https://www.meistertask.com/api/persons/" + assignedTo
+			type :GET
+			connection:"meistertask"
+		];
+		name = persons.get("firstname");
+		info persons;
+	}
+	if(description == null)
+	{
+		description = "Not added";
+	}
+	if(dueDate == null)
+	{
+		dueDate = "Not set";
+	}
+	row = Map();
+	row.put("Task Name",taskDetails);
+	row.put("Assigned To",name);
+	row.put("Due Date",dueDate);
+	row.put("Task Description",description);
+	row.put("Finish","[+Complete](invoke.function|Complete|arumugamgandhi156@gmail.com|" + item.get("id") + ")");
+	rows.add(row);
+	count = count + 1;
+}
+if(details == "")
+{
+	message = {"text":"No tasks in Meistertask!","bot":{"name":"MeisterTask","image":"https://cdn3.meistertask.com/assets/meisterlabs/products/meistertask/icon-opaque-44fe97656b56e1aa619d76277983e17d980a15dfa680b790581d3bb11a03e6ef.png"},"card":{"theme":"modern-inline"}};
+}
+else
+{
+	message = {"text":"Task present in meisterTask are :","bot":{"name":"MeisterTask","image":"https://cdn3.meistertask.com/assets/meisterlabs/products/meistertask/icon-opaque-44fe97656b56e1aa619d76277983e17d980a15dfa680b790581d3bb11a03e6ef.png"},"card":{"theme":"modern-inline"},"slides":{{"type":"table","title":"","data":{"headers":{"Task Name","Assigned To","Due Date","Task Description","Finish"},"rows":rows}}}};
+}
+zoho.cliq.postToChannel("meistertasknotifier",message);
+return message;

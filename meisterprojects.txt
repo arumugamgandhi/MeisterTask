@@ -1,0 +1,41 @@
+
+message = list();
+rows = list();
+response = invokeurl
+[
+	url :"https://www.meistertask.com/api/projects"
+	type :GET
+	connection:"meistertask"
+];
+details = "";
+count = 1;
+for each  item in response
+{
+	if(count > 10)
+	{
+		break;
+	}
+	proDetails = item.get("name");
+	Description = item.get("notes");
+	if(Description == null)
+	{
+		Description = "Not added";
+	}
+	details = details + "Project Name : " + proDetails + "\nTask Description : " + Description + "\n";
+	row = Map();
+	row.put("Project Name",proDetails);
+	row.put("Project Description",Description);
+	row.put("View Tasks","[+View](invoke.function|View|arumugamgandhi156@gmail.com|" + item.get("id") + ")");
+	rows.add(row);
+	count = count + 1;
+}
+if(details == "")
+{
+	message = {"text":"No projects in Meistertask!","bot":{"name":"MeisterTask","image":"https://cdn3.meistertask.com/assets/meisterlabs/products/meistertask/icon-opaque-44fe97656b56e1aa619d76277983e17d980a15dfa680b790581d3bb11a03e6ef.png"},"card":{"theme":"modern-inline"}};
+}
+else
+{
+	message = {"text":"The projects in Meistertask are :","bot":{"name":"MeisterTask","image":"https://cdn3.meistertask.com/assets/meisterlabs/products/meistertask/icon-opaque-44fe97656b56e1aa619d76277983e17d980a15dfa680b790581d3bb11a03e6ef.png"},"card":{"theme":"modern-inline"},"slides":{{"type":"table","title":"","data":{"headers":{"Project Name","Project Description","View Tasks"},"rows":rows}}}};
+	zoho.cliq.postToChannel("meistertasknotifier",message);
+}
+return message;

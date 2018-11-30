@@ -1,0 +1,14 @@
+
+Tid = arguments.get("key");
+params = Map();
+params.put("status","2");
+response = invokeurl
+[
+	url :"https://www.meistertask.com/api/tasks/" + Tid
+	type :PUT
+	parameters:params
+	connection:"meistertask"
+];
+message = {"text":"Task Completed!","bot":{"name":"MeisterTask","image":"https://cdn3.meistertask.com/assets/meisterlabs/products/meistertask/icon-opaque-44fe97656b56e1aa619d76277983e17d980a15dfa680b790581d3bb11a03e6ef.png"},"card":{"theme":"modern-inline"}};
+zoho.cliq.postToChannel("meistertasknotifier",message);
+return Map();
